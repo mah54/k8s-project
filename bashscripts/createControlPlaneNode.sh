@@ -6,6 +6,18 @@ if [ $EUID -ne 0 ]; then
 fi
 
 #--- Creating a Cluster
+#Add all node addresses to /etc/host.
+echo '''
+### Cluster nodes ###
+185.235.42.119 c1-cp1
+185.235.42.182 c1-cp2
+185.235.42.157 c1-cp3
+185.235.42.151 c1-node1
+185.235.42.146 c1-node2
+185.235.42.189 c1-node3
+#####################
+''' >> /etc/hosts
+
 #Create our kubernetes cluster, specify a pod network range matching that in calico.yaml
 #Only on the Control Plane Node, download the yaml files for the pod network
 wget -c https://docs.projectcalico.org/manifests/calico.yaml
