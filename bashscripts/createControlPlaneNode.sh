@@ -61,9 +61,9 @@ sudo kubeadm init \
 #Configure our account on the Control Plane Node to have admin access to the API server from a non-privileged account.
 USER=ubuntu
 USER_HOME="/home/ubuntu"
-mkdir -p $UBUNTU_HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $UBUNTU_HOME/.kube/config
-sudo chown $USER:$USER $UBUNTU_HOME/.kube/config
+mkdir -p $USER_HOME/.kube
+sudo cp /etc/kubernetes/admin.conf $USER_HOME/.kube/config
+sudo chown $USER:$USER $USER_HOME/.kube/config
 
 #Deploy yaml file for your pod network.
 kubectl apply -f calico.yaml
