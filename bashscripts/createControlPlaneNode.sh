@@ -44,6 +44,13 @@ sed -i "s/  advertiseAddress: 1.2.3.4/  advertiseAddress: $(hostname  -I | cut -
 #Set the CRI Socket to point to containerd
 sed -i 's/  criSocket: \/var\/run\/dockershim\.sock/  criSocket: \/run\/containerd\/containerd\.sock/' ClusterConfiguration.yaml
 
+#Add load balancer for certSANs:
+LB_IP=130.185.121.10
+sed -i "s/apiServer:/apiServer:\n  certSANs:\n  - \"$LB_IP\"" ClusterConfiguration.yaml
+
+#Add load balancer as an endpoint to control plane node
+echo controlPlaneEndpoint: "$LB_IP:6443" >> ClusterConfiguration.yaml
+
 #Set the cgroupDriver to systemd...matching that of your container runtime, containerd
 cat <<EOF >> ClusterConfiguration.yaml
 ---
