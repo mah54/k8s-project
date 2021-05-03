@@ -50,7 +50,7 @@ sed -i "s/  advertiseAddress: 1.2.3.4/  advertiseAddress: $(hostname  -I | cut -
 sed -i 's/  criSocket: \/var\/run\/dockershim\.sock/  criSocket: \/run\/containerd\/containerd\.sock/' ClusterConfiguration.yaml
 
 #Add load balancer for certSANs:
-sed -i "s/apiServer:/apiServer:\n  certSANs:\n  - \"$LB_IP\"" ClusterConfiguration.yaml
+sed -i "s/apiServer:/apiServer:\n  certSANs:\n  - \"$LB_IP\"/" ClusterConfiguration.yaml
 
 #Add load balancer as an endpoint to control plane node
 echo controlPlaneEndpoint: "$LB_IP:6443" >> ClusterConfiguration.yaml
