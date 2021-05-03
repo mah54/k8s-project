@@ -5,6 +5,9 @@ if [ $EUID -ne 0 ]; then
     exit 2
 fi
 
+#Load balancer IP
+LB_IP=130.185.121.10
+
 #--- Creating a Cluster
 #Add all node addresses to /etc/host.
 echo '''
@@ -15,6 +18,8 @@ echo '''
 185.235.42.151 c1-node1
 185.235.42.146 c1-node2
 185.235.42.189 c1-node3
+130.185.121.10 load-balancer
+130.185.121.102 load-balancer-2
 #####################
 ''' >> /etc/hosts
 
@@ -45,7 +50,6 @@ sed -i "s/  advertiseAddress: 1.2.3.4/  advertiseAddress: $(hostname  -I | cut -
 sed -i 's/  criSocket: \/var\/run\/dockershim\.sock/  criSocket: \/run\/containerd\/containerd\.sock/' ClusterConfiguration.yaml
 
 #Add load balancer for certSANs:
-LB_IP=130.185.121.10
 sed -i "s/apiServer:/apiServer:\n  certSANs:\n  - \"$LB_IP\"" ClusterConfiguration.yaml
 
 #Add load balancer as an endpoint to control plane node
@@ -63,6 +67,7 @@ EOF
 sudo kubeadm init \
     --config=ClusterConfiguration.yaml \
     --cri-socket /run/containerd/containerd.sock \
+    --upload-certs \
     --node-name=$HOSTNAME
 
 #Configure our account on the Control Plane Node to have admin access to the API server from a non-privileged account.
@@ -71,6 +76,9 @@ USER_HOME="/home/ubuntu"
 mkdir -p $USER_HOME/.kube
 sudo cp /etc/kubernetes/admin.conf $USER_HOME/.kube/config
 sudo chown $USER:$USER $USER_HOME/.kube/config
+
+#Access cluster with root user
+export KUBECONFIG=/etc/kubernetes/admin.conf
 
 #Deploy yaml file for your pod network.
 kubectl apply -f calico.yaml
