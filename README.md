@@ -16,5 +16,9 @@ There's also bashscripts with the same name of these playbooks in bashscript fol
 Then choose one control plane node to initialize the cluster. Other nodes (control planes and workers) will joins this one. In this script the variable LB_IP is the load balancer IP address. On the chosen node run the command bellow:
 ```bash
 sudo chmod +x createControlPlaneNode.sh
+sudo ./createControlPlaneNode.sh
 ```
-In the output, look for join commands. There should be two of them. One for joining control plane nodes and one for worker node. Use them on nodes to complete your cluster.
+In the output, look for join commands. There should be two of them. One for joining control plane nodes and one for worker node. Copy the one fir control plane to joinCPtoCluster.yaml file and the other to joinWtoCluster.yaml file. Then run them together:
+```bash
+ansible-playbook -i joinCPtoCluster.yaml joinWtoCluster.yaml
+```
