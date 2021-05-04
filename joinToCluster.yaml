@@ -1,0 +1,52 @@
+---
+- hosts: cp-nodes-join
+  become: true
+  become_user: root
+
+#Use these variables to join to an existing cluster
+#  vars:
+#    loadbalancer: "130.185.121.10"
+#    token: "abcdef.0123456789abcdef"
+#    token_hash: "sha256:7012a854f89b263eba843f8d9cb999b1db54d9605adc5e37bbe020ac0a94d648"
+#    cert_key: "27065940251b575c2ff9c72cb54a830854de8cf72caf2c72e59f924612cacf9d"
+
+  tasks:
+  - name: Join control plane nodes
+    shell: |
+      kubeadm join 130.185.121.10:6443 \
+        --token abcdef.0123456789abcdef \
+        --discovery-token-ca-cert-hash sha256:7012a854f89b263eba843f8d9cb999b1db54d9605adc5e37bbe020ac0a94d648 \
+        --control-plane \
+        --certificate-key 27065940251b575c2ff9c72cb54a830854de8cf72caf2c72e59f924612cacf9d
+
+#  - name: Join to an existing cluster by variables
+#    shell: |
+#      kubeadm join "{{ loadbalancer }}":6443 \
+#        --token "{{ token }}" \
+#        --discovery-token-ca-cert-hash "{{ token_hash }}" \
+#        --control-plane \
+#        --certificate-key "{{ cert_key }}"
+
+---
+- hosts: w-nodes-join
+  become: true
+  become_user: root
+
+#Use these variables to join to an existing cluster
+#  vars:
+#    loadbalancer: "130.185.121.10"
+#    token: "abcdef.0123456789abcdef"
+#    token_hash: "sha256:7012a854f89b263eba843f8d9cb999b1db54d9605adc5e37bbe020ac0a94d648"
+
+  tasks:
+  - name: Join worker nodes
+    shell: |
+      kubeadm join 130.185.121.10:6443
+        --token abcdef.0123456789abcdef \
+        --discovery-token-ca-cert-hash sha256:7012a854f89b263eba843f8d9cb999b1db54d9605adc5e37bbe020ac0a94d648
+
+#  - name: Join to an existing cluster by variables
+#    shell: |
+#      kubeadm join "{{ loadbalancer }}":6443 \
+#        --token "{{ token }}" \
+#        --discovery-token-ca-cert-hash "{{ token_hash }}"
