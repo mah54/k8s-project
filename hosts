@@ -20,7 +20,11 @@ c1-node1
 c1-node2
 c1-node3
 
-[cp-nodes]
-c1-cp1
+[cp-nodes-join]
 c1-cp2
 c1-cp3
+
+[w-nodes-join]
+c1-node1
+c1-node2
+c1-node3
