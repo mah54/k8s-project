@@ -11,7 +11,7 @@ ansible-playbook -i hosts package-installation-playbook.yaml
 ```
 There's also bashscripts with the same name of these playbooks in bashscript folder. They can be used on individual hosts with the same order as above.
 
-## Setup Control Plane nodes
+## Setup Cluster nodes
 
 Then choose one control plane node to initialize the cluster. Other nodes (control planes and workers) will joins this one. In this script the variable LB_IP is the load balancer IP address. On the chosen node run the command bellow:
 ```bash
