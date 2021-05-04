@@ -1,23 +1,25 @@
 ---
-- hosts: cp-nodes-join
+- name: Join control planes to cluster
+  hosts: cp-nodes-join
   become: true
   become_user: root
 
 #Use these variables to join to an existing cluster
-#  vars:
+  vars:
+    USER: "ubuntu"
+    USER_HOME: "/home/ubuntu"
 #    loadbalancer: "130.185.121.10"
 #    token: "abcdef.0123456789abcdef"
-#    token_hash: "sha256:7012a854f89b263eba843f8d9cb999b1db54d9605adc5e37bbe020ac0a94d648"
-#    cert_key: "27065940251b575c2ff9c72cb54a830854de8cf72caf2c72e59f924612cacf9d"
+#    token_hash: "sha256:be705b73c4de9089d9df0419ac8ed2de69add53dc6a415ed0f812b749b94bb6a"
+#    cert_key: "fe2f1920c69f63856efad27f73a52ca62995cab0ced56126b6bf8518ed105fc6"
 
   tasks:
   - name: Join control plane nodes
     shell: |
-      kubeadm join 130.185.121.10:6443 \
-        --token abcdef.0123456789abcdef \
-        --discovery-token-ca-cert-hash sha256:7012a854f89b263eba843f8d9cb999b1db54d9605adc5e37bbe020ac0a94d648 \
-        --control-plane \
-        --certificate-key 27065940251b575c2ff9c72cb54a830854de8cf72caf2c72e59f924612cacf9d
+      #Paste your command here
+      kubeadm join 130.185.121.10:6443 --token abcdef.0123456789abcdef \
+        --discovery-token-ca-cert-hash sha256:be705b73c4de9089d9df0419ac8ed2de69add53dc6a415ed0f812b749b94bb6a \
+        --control-plane --certificate-key fe2f1920c69f63856efad27f73a52ca62995cab0ced56126b6bf8518ed105fc6
 
 #  - name: Join to an existing cluster by variables
 #    shell: |
@@ -27,26 +29,16 @@
 #        --control-plane \
 #        --certificate-key "{{ cert_key }}"
 
----
-- hosts: w-nodes-join
-  become: true
-  become_user: root
+  - name: Create a .kube if it does not exist
+    ansible.builtin.file:
+      path: "{{ USER_HOME }}/.kube"
+      state: directory
 
-#Use these variables to join to an existing cluster
-#  vars:
-#    loadbalancer: "130.185.121.10"
-#    token: "abcdef.0123456789abcdef"
-#    token_hash: "sha256:7012a854f89b263eba843f8d9cb999b1db54d9605adc5e37bbe020ac0a94d648"
+  - name: Configure an account on the Control Plane Node to have admin access to the API server from a non-privileged account
+    ansible.builtin.copy:
+      src: "/etc/kubernetes/admin.conf"
+      dest: "{{ USER_HOME }}/.kube/config"
+      owner: "{{ USER }}"
+      group: "{{ USER }}"
+      remote_src: yes
 
-  tasks:
-  - name: Join worker nodes
-    shell: |
-      kubeadm join 130.185.121.10:6443
-        --token abcdef.0123456789abcdef \
-        --discovery-token-ca-cert-hash sha256:7012a854f89b263eba843f8d9cb999b1db54d9605adc5e37bbe020ac0a94d648
-
-#  - name: Join to an existing cluster by variables
-#    shell: |
-#      kubeadm join "{{ loadbalancer }}":6443 \
-#        --token "{{ token }}" \
-#        --discovery-token-ca-cert-hash "{{ token_hash }}"
