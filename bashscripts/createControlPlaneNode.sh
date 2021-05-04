@@ -35,7 +35,7 @@ sed -i 's/policy\/v1beta1/policy\/v1/' calico.yaml
 ##range doesn't overlap with other networks in our infrastructure.
 
 #Generate a default kubeadm init configuration file...this defines the settings of the cluster being built.
-kubeadm config print init-defaults | tee ClusterConfiguration.yaml
+kubeadm config print init-defaults > ClusterConfiguration.yaml
 
 #Inside default configuration file, we need to change four things.
 #1. The IP Endpoint for the API Server localAPIEndpoint.advertiseAddress:
@@ -54,6 +54,9 @@ sed -i "s/apiServer:/apiServer:\n  certSANs:\n  - \"$LB_IP\"/" ClusterConfigurat
 
 #Add load balancer as an endpoint to control plane node
 echo controlPlaneEndpoint: "$LB_IP:6443" >> ClusterConfiguration.yaml
+
+#Pod network range
+sed -i "s/networking:/networking:\n  podSubnet: 192\.168\.0\.0\/24/" ClusterConfiguration.yaml
 
 #Set the cgroupDriver to systemd...matching that of your container runtime, containerd
 cat <<EOF >> ClusterConfiguration.yaml
