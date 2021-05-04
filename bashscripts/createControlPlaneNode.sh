@@ -74,11 +74,11 @@ sudo kubeadm init \
     --node-name=$HOSTNAME
 
 #Configure our account on the Control Plane Node to have admin access to the API server from a non-privileged account.
-USER=ubuntu
+KUSER=ubuntu
 USER_HOME="/home/ubuntu"
 mkdir -p $USER_HOME/.kube
 sudo cp /etc/kubernetes/admin.conf $USER_HOME/.kube/config
-sudo chown $USER:$USER $USER_HOME/.kube/config
+sudo chown $KUSER:$KUSER $USER_HOME/.kube/config
 
 #Access cluster with root user
 export KUBECONFIG=/etc/kubernetes/admin.conf
