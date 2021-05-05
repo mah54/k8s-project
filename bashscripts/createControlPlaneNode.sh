@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [ $EUID -ne 0 ]; then
-    echo "$0 is not running as root. Try using sudo."
-    exit 2
-fi
+#if [ $EUID -ne 0 ]; then
+#    echo "$0 is not running as root. Try using sudo."
+#    exit 2
+#fi
 
 #Load balancer IP
 LB_IP=130.185.121.10
@@ -19,9 +19,8 @@ echo '''
 185.235.42.146 c1-node2
 185.235.42.189 c1-node3
 130.185.121.10 load-balancer
-130.185.121.102 load-balancer-2
 #####################
-''' >> /etc/hosts
+''' | sudo tee /etc/hosts
 
 #Create our kubernetes cluster, specify a pod network range matching that in calico.yaml
 #Only on the Control Plane Node, download the yaml files for the pod network
@@ -56,7 +55,7 @@ sed -i "s/apiServer:/apiServer:\n  certSANs:\n  - \"$LB_IP\"/" ClusterConfigurat
 echo controlPlaneEndpoint: "$LB_IP:6443" >> ClusterConfiguration.yaml
 
 #Pod network range
-sed -i "s/networking:/networking:\n  podSubnet: 192\.168\.0\.0\/24/" ClusterConfiguration.yaml
+#sed -i "s/networking:/networking:\n  podSubnet: 192\.168\.0\.0\/24/" ClusterConfiguration.yaml
 
 #Set the cgroupDriver to systemd...matching that of your container runtime, containerd
 cat <<EOF >> ClusterConfiguration.yaml
@@ -81,7 +80,7 @@ sudo cp /etc/kubernetes/admin.conf $USER_HOME/.kube/config
 sudo chown $KUSER:$KUSER $USER_HOME/.kube/config
 
 #Access cluster with root user
-export KUBECONFIG=/etc/kubernetes/admin.conf
+#export KUBECONFIG=/etc/kubernetes/admin.conf
 
 #Deploy yaml file for your pod network.
 kubectl apply -f calico.yaml
