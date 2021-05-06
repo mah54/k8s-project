@@ -8,19 +8,25 @@
   vars:
     USER: "ubuntu"
     USER_HOME: "/home/ubuntu"
-    API_ADV_ADDRESS: "185.235.42.119"
 #    loadbalancer: "130.185.121.10"
 #    token: "abcdef.0123456789abcdef"
 #    token_hash: "sha256:be705b73c4de9089d9df0419ac8ed2de69add53dc6a415ed0f812b749b94bb6a"
 #    cert_key: "fe2f1920c69f63856efad27f73a52ca62995cab0ced56126b6bf8518ed105fc6"
   tasks:
+
+  - name: Get current host IP
+    shell: hostname  -I | cut -f1 -d' '
+      register: API_ADV_ADDRESS
+    - set_fact:
+        API_ADV_ADDRESS={{ API_ADV_ADDRESS.stdout }}
+
   - name: Join control plane nodes
     shell: |
       #Paste your command here
       kubeadm join 130.185.121.10:6443 --token abcdef.0123456789abcdef \
         --discovery-token-ca-cert-hash sha256:be705b73c4de9089d9df0419ac8ed2de69add53dc6a415ed0f812b749b94bb6a \
         --control-plane --certificate-key fe2f1920c69f63856efad27f73a52ca62995cab0ced56126b6bf8518ed105fc6 \
-        --apiserver-advertise-address "{{ API_ADV_ADDRESS }}"
+        --apiserver-advertise-address="{{ API_ADV_ADDRESS }}"
 
 #  - name: Join to an existing cluster by variables
 #    shell: |
