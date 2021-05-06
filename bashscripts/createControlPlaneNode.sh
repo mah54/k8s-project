@@ -33,43 +33,12 @@ sed -i 's/policy\/v1beta1/policy\/v1/' calico.yaml
 ##adjust if needed for your infrastructure to ensure that the Pod network IP
 ##range doesn't overlap with other networks in our infrastructure.
 
-#Generate a default kubeadm init configuration file...this defines the settings of the cluster being built.
-kubeadm config print init-defaults > ClusterConfiguration.yaml
-
-#Inside default configuration file, we need to change four things.
-#1. The IP Endpoint for the API Server localAPIEndpoint.advertiseAddress:
-#2. nodeRegistration.criSocket from docker to containerd
-#3. Set the cgroup driver for the kubelet to systemd, it's not set in this file yet, the default is cgroupfs
-#4. Edit kubernetesVersion to match the version you installed in 0-PackageInstallation-containerd.sh
-
-#Change the address of the localAPIEndpoint.advertiseAddress to the Control Plane Node's IP address
-sed -i "s/  advertiseAddress: 1.2.3.4/  advertiseAddress: $(hostname  -I | cut -f1 -d' ')/" ClusterConfiguration.yaml
-
-#Set the CRI Socket to point to containerd
-sed -i 's/  criSocket: \/var\/run\/dockershim\.sock/  criSocket: \/run\/containerd\/containerd\.sock/' ClusterConfiguration.yaml
-
-#Add load balancer for certSANs:
-sed -i "s/apiServer:/apiServer:\n  certSANs:\n  - \"$LB_IP\"/" ClusterConfiguration.yaml
-
-#Add load balancer as an endpoint to control plane node
-echo controlPlaneEndpoint: "$LB_IP:6443" >> ClusterConfiguration.yaml
-
-#Pod network range
-#sed -i "s/networking:/networking:\n  podSubnet: 192\.168\.0\.0\/24/" ClusterConfiguration.yaml
-
-#Set the cgroupDriver to systemd...matching that of your container runtime, containerd
-cat <<EOF >> ClusterConfiguration.yaml
----
-apiVersion: kubelet.config.k8s.io/v1beta1
-kind: KubeletConfiguration
-cgroupDriver: systemd
-EOF
-
 #Add CRI socket since because there's still a check for docker in the kubeadm init process, 
 sudo kubeadm init \
-    --config=ClusterConfiguration.yaml \
-    --cri-socket /run/containerd/containerd.sock \
+    --control-plane-endpoint=$LB_IP:6443 \
     --upload-certs \
+    --apiserver-advertise-address=$(hostname  -I | cut -f1 -d' ') \
+    --pod-network-cidr=192.168.0.0/16 \
     --node-name=$HOSTNAME
 
 #Configure our account on the Control Plane Node to have admin access to the API server from a non-privileged account.
