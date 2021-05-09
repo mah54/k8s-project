@@ -20,7 +20,7 @@ echo '''
 185.235.42.189 c1-node3
 130.185.121.10 load-balancer
 #####################
-''' | sudo tee /etc/hosts
+''' | sudo tee -a /etc/hosts
 
 #Create our kubernetes cluster, specify a pod network range matching that in calico.yaml
 #Only on the Control Plane Node, download the yaml files for the pod network
