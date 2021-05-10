@@ -1,0 +1,17 @@
+---
+- hosts: cp-nodes
+  become: true
+  become_user: root
+
+  tasks:
+  - name: Change kube-controller-manager bind address
+    ansible.builtin.replace:
+      path: /etc/kubernetes/manifests/kube-controller-manager.yaml
+      regexp: 'bind-address=127.0.0.1'
+      replace: 'bind-address=0.0.0.0'
+
+  - name: Change kube-controller-manager bind address
+    ansible.builtin.replace:
+      path: /etc/kubernetes/manifests/kube-scheduler.yaml
+      regexp: 'bind-address=127.0.0.1'
+      replace: 'bind-address=0.0.0.0'
