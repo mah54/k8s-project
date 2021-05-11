@@ -43,5 +43,5 @@ Finally make sure you have access to kubernetes on load balancer node, and run t
 ./apply-ingress.sh
 ```
 You can access grafana on your load balancer, using these credentials:
-	username: admin
-	password: prom-operator
+- username: admin
+- password: prom-operator
