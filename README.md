@@ -30,11 +30,18 @@ ansible-playbook -i hosts joinCPtoCluster.yaml joinWtoCluster.yaml
 
 ## Monitoring
 
-To install helm and kube-prometheus-stack chart, run install-kube-prometheus-stack.sh bashscript on one of the nodes:
+To install helm and kube-prometheus-stack chart, run install-kube-prometheus-stack.sh bashscript on one of the control plane nodes:
 ```bash
 ./install-kube-prometheus-stack.sh
 ```
-Then you should change bind address node control plane nodes:
+Then you should change bind address for two manifests in control plane nodes:
 ```bash
 ansible-playbook -i hosts fix-bind-address-playbook.yaml
 ```
+Finally make sure you have access to kubernetes on load balancer node, and run the apply-ingress.sh.
+```bash
+./apply-ingress.sh
+```
+You can access grafana on your load balancer, using these credentials:
+	username: admin
+	password: prom-operator
