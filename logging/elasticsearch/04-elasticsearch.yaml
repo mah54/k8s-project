@@ -37,7 +37,7 @@ kind: Service
 metadata:
   labels:
     app: elasticsearch
-  name: elasticsearch-svc
+  name: elasticsearch
   namespace: logging
 spec:
   ports:
