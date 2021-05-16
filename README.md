@@ -51,11 +51,11 @@ You can access grafana on your load balancer, using these credentials:
 
 To deploy elasticsearch, apply related yaml files in numerical order. You may need to add an extra node to the cluster. Then deploy kibana and filebeat. You need to change the ip addresses before deploying.
 ```bash
-- kubectl apply -f elasticsearch/01-namespace-logging.yaml
-- kubectl apply -f elasticsearch/02-elasticsearch-pv.yaml
-- kubectl apply -f elasticsearch/03-elasticsearch-pvc.yaml
-- kubectl apply -f elasticsearch/04-elasticsearch.yaml
-- kubectl apply -f kibana.yaml
-- kubectl apply -f filebeat.yaml
+kubectl apply -f elasticsearch/01-namespace-logging.yaml
+kubectl apply -f elasticsearch/02-elasticsearch-pv.yaml
+kubectl apply -f elasticsearch/03-elasticsearch-pvc.yaml
+kubectl apply -f elasticsearch/04-elasticsearch.yaml
+kubectl apply -f kibana.yaml
+kubectl apply -f filebeat.yaml
 ```
 
