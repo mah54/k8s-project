@@ -30,6 +30,12 @@ spec:
 #          value: http://elasticsearch:9200/
         ports:
         - containerPort: 5601
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
 ---
 apiVersion: v1
 kind: Service
