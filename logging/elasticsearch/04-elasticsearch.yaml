@@ -27,6 +27,12 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /usr/share/elasticsearch/data
+        resources:
+          limits:
+            memory: 2048Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
       volumes:
       - name: data
         persistentVolumeClaim:
