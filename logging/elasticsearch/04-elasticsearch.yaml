@@ -31,6 +31,18 @@ spec:
       - name: data
         persistentVolumeClaim:
           claimName: elasticsearch-data
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: release
+                  operator: In
+                  values:
+                  - prometheus
+              topologyKey: "kubernetes.io/hostname"
 ---
 apiVersion: v1
 kind: Service
