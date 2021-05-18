@@ -5,7 +5,7 @@ metadata:
   namespace: kube-system
 spec:
   # activeDeadlineSeconds: 100
-  schedule: "*/2 * * * *"
+  schedule: "* */6 * * *"
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 2
   jobTemplate:
@@ -25,7 +25,9 @@ spec:
             - name: ETCDCTL_API
               value: "3"
             command: ["/bin/sh"]
-            args: ["-ec", "etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key snapshot save /backup/etcd-snapshot-$(date +%Y-%m-%d_%H:%M:%S_%Z).db"]
+            args:
+            - -c
+            - etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key snapshot save /backup/etcd-snapshot-$(printf "%(%Y-%m-%d_%H:%M:%S_%Z)T\n").db
             resources:
               limits:
                 cpu: 500m
