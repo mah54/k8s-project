@@ -5,7 +5,7 @@ metadata:
   namespace: kube-system
 spec:
   # activeDeadlineSeconds: 100
-  schedule: "* */6 * * *"
+  schedule: "0 */6 * * *"
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 2
   jobTemplate:
