@@ -1,0 +1,13 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: wp1
+  labels:
+    namespace: wp1
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: wp2
+  labels:
+    namespace: wp2
