@@ -15,9 +15,25 @@ spec:
     type: DirectoryOrCreate
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  namespace: wp1
+  labels:
+    app: wordpress
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: wordpress-mysql
+  namespace: wp1
   labels:
     app: wordpress
 spec:
@@ -29,24 +45,11 @@ spec:
   clusterIP: 10.96.33.06
   type: ClusterIP
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mysql-pvc
-  labels:
-    app: wordpress
-spec:
-  storageClassName: manual
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wordpress-mysql
+  namespace: wp1
   labels:
     app: wordpress
 spec:

@@ -15,9 +15,25 @@ spec:
     type: DirectoryOrCreate
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wp-pvc
+  namespace: wp1
+  labels:
+    app: wordpress
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: wordpress
+  namespace: wp1
   labels:
     app: wordpress
 spec:
@@ -29,24 +45,11 @@ spec:
     tier: frontend
   type: NodePort
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: wp-pvc
-  labels:
-    app: wordpress
-spec:
-  storageClassName: manual
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wordpress
+  namespace: wp1
   labels:
     app: wordpress
 spec:
