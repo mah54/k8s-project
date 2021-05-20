@@ -71,3 +71,18 @@ Choose these parameters as desired:
 - spec.jobTemplate.spec.template.spec.containers.image: This one must match the version in /etc/kubernetes/manifests/etcd.yaml
 - spec.jobTemplate.spec.template.spec.nodeSelector
 - spec.jobTemplate.spec.template.spec.containers.volumes.hostPath.path
+
+## Wordpress Deployments and Network Policies
+
+I've edited [this kubernetes sample](https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/) for deploying wordpress. There are two wordpress application in two different namespaces that the namespaces can't access eachother but can be accessed from other namespaces like default. There are three policies for eatch namespace:
+1- Allow external traffic on port 80
+2- Allow traffic from specified namespaces
+3- Deny all incoming traffic
+
+```bash
+kubectl apply -f create-namespaces.yaml
+kubectl apply -k wp1
+kubectl apply -k wp2
+kubectl apply -f wp1/wp1-np.yaml
+kubectl apply -f wp2/wp2-np.yaml
+```
