@@ -58,4 +58,16 @@ kubectl apply -f elasticsearch/04-elasticsearch.yaml
 kubectl apply -f kibana.yaml
 kubectl apply -f filebeat.yaml
 ```
+podAntiAffinity is set to prevent elasticsearch be scheduled on the same node as prometheus.
 
+## Backup
+
+To backup etcd apply the cron job:
+```bash
+kubectl apply -f etcd-backup.yaml
+```
+Choose these parameters as desired:
+- spec.schedule
+- spec.jobTemplate.spec.template.spec.containers.image: This one must match the version in /etc/kubernetes/manifests/etcd.yaml
+- spec.jobTemplate.spec.template.spec.nodeSelector
+- spec.jobTemplate.spec.template.spec.containers.volumes.hostPath.path
