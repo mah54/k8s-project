@@ -1,0 +1,61 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-external
+  namespace: wp1
+spec:
+  podSelector:
+    matchLabels:
+      app: wordpress
+  ingress:
+  - from: []
+    ports:
+    - port: 80
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ingress-whilelist
+  namespace: wp1
+spec:
+  podSelector: {}
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          namespace: "wp1"
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: "monitoring"
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: "logging"
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: "kube-system"
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: "default"
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: "kube-public"
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: "kube-node-lease"
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: "ingress-nginx"
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: wp1
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
